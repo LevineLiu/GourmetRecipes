@@ -1,4 +1,4 @@
-package com.levine.base.utils
+package com.levine.mvvm.utils
 
 import android.os.Build
 import android.text.TextUtils

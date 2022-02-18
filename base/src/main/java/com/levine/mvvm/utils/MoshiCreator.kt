@@ -1,4 +1,4 @@
-package com.levine.base.utils
+package com.levine.mvvm.utils
 
 import com.squareup.moshi.Moshi
 
