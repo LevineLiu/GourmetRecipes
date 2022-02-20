@@ -1,6 +1,7 @@
 package com.levine.mvvm.base
 
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.Fragment
 
 /**
  * 作    者：liulewen
@@ -9,5 +10,6 @@ import androidx.databinding.ViewDataBinding
  * 描    述：Fragment基类
  * 修订历史：
  */
-abstract class BaseFragment<VDB : ViewDataBinding, VM : > {
+abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel<R>, R : BaseRepository> : Fragment(){
+
 }
