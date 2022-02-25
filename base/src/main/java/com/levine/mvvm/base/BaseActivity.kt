@@ -1,36 +1,29 @@
 package com.levine.mvvm.base
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.os.PersistableBundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import java.lang.reflect.ParameterizedType
 
 /**
  * 作    者：liulewen
  * 版    本：1.0
- * 创建日期：2022/2/16 16:33
- * 描    述：Fragment基类
+ * 创建日期：2022/2/21 18:21
+ * 描    述：Activity基类
  * 修订历史：
  */
-abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel<out BaseRepository>> : Fragment(){
+abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel<out BaseRepository>> : AppCompatActivity(){
     protected lateinit var dataBinding: VDB
     protected lateinit var viewModel: VM
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        dataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, true)
-        return dataBinding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
         initView()
+        initLiveDataObserve()
     }
 
     override fun onDestroy() {
@@ -39,6 +32,7 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel<out BaseRe
     }
 
     private fun initView() {
+        dataBinding = DataBindingUtil.setContentView(this, getLayoutId())
         viewModel = createViewModel().apply {
             if (viewModel == null) {
                 val modelClass: Class<VM>
@@ -46,10 +40,10 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel<out BaseRe
                 if (superClassType is ParameterizedType) {
                     //有传泛型参数
                     modelClass = superClassType.actualTypeArguments[1] as Class<VM>
-                    viewModel = createFragmentViewModel(modelClass)
+                    viewModel = createActivityViewModel(modelClass)
                 } else {
                     //没传泛型参数
-                    viewModel = createFragmentViewModel(BaseViewModel::class.java) as VM
+                    viewModel = createActivityViewModel(BaseViewModel::class.java) as VM
                 }
             }
         }
@@ -58,15 +52,13 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel<out BaseRe
         }
 
         dataBinding.setLifecycleOwner(this)
-
     }
 
-    protected fun <M : ViewModel> createFragmentViewModel(viewModelClass: Class<M>, factory: ViewModelProvider.Factory): M {
-        return ViewModelProvider(this, factory).get(viewModelClass)
-    }
+    /**
+     * LiveData的监听
+     */
+    protected fun initLiveDataObserve() {
 
-    protected fun <M : ViewModel> createFragmentViewModel(viewModelClass: Class<M>): M {
-        return ViewModelProvider(this).get(viewModelClass)
     }
 
     /**
@@ -84,4 +76,12 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel<out BaseRe
      * @return ViewModel id
      */
     abstract fun getViewModelId(): Int
+
+    protected fun <M : ViewModel> createActivityViewModel(viewModelClass: Class<M>, factory: ViewModelProvider.Factory): M {
+        return ViewModelProvider(this, factory).get(viewModelClass)
+    }
+
+    protected fun <M : ViewModel> createActivityViewModel(viewModelClass: Class<M>): M {
+        return ViewModelProvider(this).get(viewModelClass)
+    }
 }

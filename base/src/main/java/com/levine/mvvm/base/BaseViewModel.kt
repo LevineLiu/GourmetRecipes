@@ -4,20 +4,21 @@ import androidx.lifecycle.ViewModel
 import com.levine.mvvm.event.SingleLiveEvent
 
 class BaseViewModel<R : BaseRepository>(var repository: R) : ViewModel() {
-    var uiLiveData: UIChangeLiveData? = null
-        get() {
-            if (field == null) {
-                field = UIChangeLiveData()
-            }
-            return field
-        }
+//    var uiLiveData: UIChangeLiveData? = null
+//        get() {
+//            if (field == null) {
+//                field = UIChangeLiveData()
+//            }
+//            return field
+//        }
+    val uiLiveData: UIChangeLiveData by lazy { UIChangeLiveData() }
 
     fun showDialog(content: String = "加载中...") {
-        uiLiveData?.showDialogEvent?.postValue(content)
+        uiLiveData.showDialogEvent?.postValue(content)
     }
 
     fun dismissDialog() {
-        uiLiveData?.dismissDialogEvent?.call()
+        uiLiveData.dismissDialogEvent?.call()
     }
 
     /**
