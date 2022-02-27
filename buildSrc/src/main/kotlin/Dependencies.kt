@@ -30,7 +30,7 @@ object Dependencies {
 
 object Versions {
     const val lifecycle = "2.4.0"
-    const val navigation = "2.3.5"
+    const val navigation = "2.4.1"
     const val retrofit = "2.9.0"
     const val okhttp = "4.9.3"
     const val glide = "4.13.0"

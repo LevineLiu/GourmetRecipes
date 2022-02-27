@@ -2,6 +2,7 @@ package com.levine.gourmetrecipes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.levine.gourmetrecipes.ui.home.HomeViewModel
 import com.levine.mvvm.base.BaseRepository
 import com.levine.mvvm.base.BaseViewModel
 import com.levine.mvvm.base.IBaseRepository
@@ -14,11 +15,13 @@ import java.lang.Exception
  * 描    述：ViewModel工厂类，每增加一个ViewModel都需要在这里修改
  * 修订历史：
  */
-class ViewModelFactory(repository: IBaseRepository) : ViewModelProvider.NewInstanceFactory(){
+class ViewModelFactory(var repository: IBaseRepository) : ViewModelProvider.NewInstanceFactory(){
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         try {
-            if (modelClass.isAssignableFrom(BaseViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+                return HomeViewModel(repository) as T
+            } else if (modelClass.isAssignableFrom(BaseViewModel::class.java)) {
                 return BaseViewModel(BaseRepository()) as T
             }
         } catch(e :Exception){

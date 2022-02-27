@@ -19,12 +19,12 @@ import java.lang.reflect.ParameterizedType
  * 描    述：Fragment基类
  * 修订历史：
  */
-abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel<out BaseRepository>> : Fragment(){
+abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel> : Fragment(){
     protected lateinit var dataBinding: VDB
     protected lateinit var viewModel: VM
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        dataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, true)
+        dataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, isAttachToParent())
         return dataBinding.root
     }
 
@@ -39,20 +39,20 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel<out BaseRe
     }
 
     private fun initView() {
-        viewModel = createViewModel().apply {
-            if (viewModel == null) {
-                val modelClass: Class<VM>
-                val superClassType = javaClass.genericSuperclass
-                if (superClassType is ParameterizedType) {
-                    //有传泛型参数
-                    modelClass = superClassType.actualTypeArguments[1] as Class<VM>
-                    viewModel = createFragmentViewModel(modelClass)
-                } else {
-                    //没传泛型参数
-                    viewModel = createFragmentViewModel(BaseViewModel::class.java) as VM
-                }
+        viewModel = createViewModel()
+        if (viewModel == null) {
+            val modelClass: Class<VM>
+            val superClassType = javaClass.genericSuperclass
+            if (superClassType is ParameterizedType) {
+                //有传泛型参数
+                modelClass = superClassType.actualTypeArguments[1] as Class<VM>
+                viewModel = createFragmentViewModel(modelClass)
+            } else {
+                //没传泛型参数
+                viewModel = createFragmentViewModel(BaseViewModel::class.java) as VM
             }
         }
+
         if (viewModel != null) {
             dataBinding.setVariable(getViewModelId(), viewModel)
         }
@@ -65,8 +65,12 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel<out BaseRe
         return ViewModelProvider(this, factory).get(viewModelClass)
     }
 
-    protected fun <M : ViewModel> createFragmentViewModel(viewModelClass: Class<M>): M {
+    private fun <M : ViewModel> createFragmentViewModel(viewModelClass: Class<M>): M {
         return ViewModelProvider(this).get(viewModelClass)
+    }
+
+    open fun isAttachToParent(): Boolean {
+        return true
     }
 
     /**

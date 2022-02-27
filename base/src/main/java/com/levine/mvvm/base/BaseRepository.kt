@@ -1,6 +1,6 @@
 package com.levine.mvvm.base
 
-class BaseRepository : IBaseRepository {
+open class BaseRepository : IBaseRepository {
     override fun loadData() {
 
     }

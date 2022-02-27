@@ -16,7 +16,7 @@ import java.lang.reflect.ParameterizedType
  * 描    述：Activity基类
  * 修订历史：
  */
-abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel<out BaseRepository>> : AppCompatActivity(){
+abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> : AppCompatActivity(){
     protected lateinit var dataBinding: VDB
     protected lateinit var viewModel: VM
 

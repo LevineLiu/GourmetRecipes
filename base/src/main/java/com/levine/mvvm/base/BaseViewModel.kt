@@ -3,7 +3,7 @@ package com.levine.mvvm.base
 import androidx.lifecycle.ViewModel
 import com.levine.mvvm.event.SingleLiveEvent
 
-class BaseViewModel<R : BaseRepository>(var repository: R) : ViewModel() {
+open class BaseViewModel(var repository: IBaseRepository) : ViewModel() {
 //    var uiLiveData: UIChangeLiveData? = null
 //        get() {
 //            if (field == null) {
